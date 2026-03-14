@@ -16,6 +16,44 @@ import { VoiceRecorder } from 'capacitor-voice-recorder';
 import { Camera } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
 import { StatusBar, Style } from '@capacitor/status-bar';
+import { AppShortcuts } from '@capawesome/capacitor-app-shortcuts';
+
+async function createShortcuts() {
+    await AppShortcuts.set({
+        shortcuts: [
+            {
+                id: AppMode.Dashboard,
+                title: 'Dashboard',
+                iosIcon: 6,
+                androidIcon: 17301505,
+            },
+            {
+                id: AppMode.Conversation,
+                title: 'Conversation',
+                iosIcon: 6,
+                androidIcon: 17301659,
+            },
+            {
+                id: AppMode.Journal,
+                title: 'Journal',
+                iosIcon: 6,
+                androidIcon: 17301569,
+            },
+            {
+                id: AppMode.Podcasts,
+                title: 'Podcasts',
+                iosIcon: 6,
+                androidIcon: 17301640,
+            },
+            {
+                id: AppMode.Settings,
+                title: 'Settings',
+                iosIcon: 6,
+                androidIcon: 17301577,
+            },
+        ],
+    });
+}
 
 export async function requestAppPermissions() {
     if (Capacitor.getPlatform() === 'web') {
@@ -92,11 +130,25 @@ const App: React.FC = () => {
                 await StatusBar.setBackgroundColor({ color: '#0f1927' });
                 await StatusBar.setStyle({ style: Style.Dark });
                 const permissions = await requestAppPermissions();
+                const initialize = async () => {
+                    await AppShortcuts.removeAllListeners().then(() => {
+                        void AppShortcuts.addListener('click', event => {
+                            setMode(event.shortcutId as AppMode);
+                        });
+                    });
+                };
+                initialize().then(() => {
+                    createShortcuts();
+                });
                 if (permissions) {
                     console.log("All permissions granted");
                 } else {
                     console.log("Some permissions denied", permissions);
                 }
+                // Listen for clicks
+                AppShortcuts.addListener('click', (event) => {
+                    console.log(event);
+                });
             }
         }
         handelePermissions();
