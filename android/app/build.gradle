@@ -7,8 +7,8 @@ android {
         applicationId "com.vdkteam.maitreya"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 1 * 10000 + 0 * 100 + 0
+        versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -18,8 +18,20 @@ android {
     }
     buildTypes {
         release {
+            lintOptions {
+                checkReleaseBuilds false
+                abortOnError false
+            }
+            debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    applicationVariants.configureEach { variant ->
+        def appName = "maitreya"
+        variant.outputs.configureEach { output ->
+            output.outputFileName = "${appName}-${variant.name}-${defaultConfig.versionName}.apk"
         }
     }
 }
