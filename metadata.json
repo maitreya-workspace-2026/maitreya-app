@@ -1,0 +1,9 @@
+{
+  "name": "Copy of MAITREYA",
+  "description": "India’s first Agentic AI companion designed to offer deeply empathetic, proactive digital support for single individuals, especially those experiencing loneliness or emotional distress. Features specialized support for Dyslexia and Alzheimer’s patients.",
+  "requestFramePermissions": [
+    "microphone",
+    "geolocation",
+    "camera"
+  ]
+}

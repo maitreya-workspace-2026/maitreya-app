@@ -1,0 +1,10 @@
+{
+  "appId": "com.vdkteam.maitreya",
+  "appName": "maitreya",
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
+  }
+}
