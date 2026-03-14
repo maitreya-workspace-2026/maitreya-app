@@ -10,23 +10,39 @@ import BottomNav from './components/BottomNav';
 import OfflineNotification from './components/OfflineNotification';
 import Journal from './components/Journal';
 import Podcasts from './components/Podcasts';
+import { Capacitor } from '@capacitor/core';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { VoiceRecorder } from 'capacitor-voice-recorder';
 import { Camera } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
 import { StatusBar, Style } from '@capacitor/status-bar';
+import { CapacitorCalendar } from '@ebarooni/capacitor-calendar';
+import { Contacts } from '@capacitor-community/contacts';
 
 export async function requestAppPermissions() {
+    if (Capacitor.getPlatform() === 'web') {
+        return true;
+    }
     const result = {
         camera: false,
         microphone: false,
-        location: false
+        location: false,
+        calendar: false,
+        contacts: false,
     };
 
     try {
         // Camera
         const camera = await Camera.requestPermissions();
         result.camera = camera.camera === "granted";
+
+        // Calendar
+        const calender = await CapacitorCalendar.requestFullCalendarAccess();
+        result.calendar = calender.result === "granted";
+
+        // Contacts
+        const contacts = await Contacts.requestPermissions();
+        result.contacts = contacts.contacts === "granted";
 
         // Microphone
         const mic = await VoiceRecorder.requestAudioRecordingPermission();
@@ -36,11 +52,11 @@ export async function requestAppPermissions() {
         const location = await Geolocation.requestPermissions();
         result.location = location.location === "granted";
 
-        return result.camera && result.microphone && result.location;
+        return result.camera && result.microphone && result.location && result.calendar && result.contacts;
 
     } catch (err) {
         console.error("Permission error:", err);
-        return result.camera && result.microphone && result.location;
+        return result.camera && result.microphone && result.location && result.calendar && result.contacts;
     }
 }
 
@@ -81,17 +97,21 @@ const App: React.FC = () => {
     };
 
     // Listen for agent status from ConversationContainer
-    useEffect(async () => {
+    useEffect(() => {
         SplashScreen?.hide();
-        await StatusBar.setBackgroundColor({ color: '#0f1927' });
-        await StatusBar.setStyle({ style: Style.Dark });
-        const permissions = await requestAppPermissions();
-
-        if (permissions) {
-            console.log("All permissions granted");
-        } else {
-            console.log("Some permissions denied", permissions);
+        const handelePermissions = async () => {
+            if (Capacitor.getPlatform() !== 'web') {
+                await StatusBar.setBackgroundColor({ color: '#0f1927' });
+                await StatusBar.setStyle({ style: Style.Dark });
+                const permissions = await requestAppPermissions();
+                if (permissions) {
+                    console.log("All permissions granted");
+                } else {
+                    console.log("Some permissions denied", permissions);
+                }
+            }
         }
+        handelePermissions();
         const handleAgentStatus = (e: any) => {
             setIsAgentActive(e.detail);
         };
