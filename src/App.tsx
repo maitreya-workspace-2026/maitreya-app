@@ -16,8 +16,6 @@ import { VoiceRecorder } from 'capacitor-voice-recorder';
 import { Camera } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
 import { StatusBar, Style } from '@capacitor/status-bar';
-import { CapacitorCalendar } from '@ebarooni/capacitor-calendar';
-import { Contacts } from '@capacitor-community/contacts';
 
 export async function requestAppPermissions() {
     if (Capacitor.getPlatform() === 'web') {
@@ -26,23 +24,13 @@ export async function requestAppPermissions() {
     const result = {
         camera: false,
         microphone: false,
-        location: false,
-        calendar: false,
-        contacts: false,
+        location: false
     };
 
     try {
         // Camera
         const camera = await Camera.requestPermissions();
         result.camera = camera.camera === "granted";
-
-        // Calendar
-        const calender = await CapacitorCalendar.requestFullCalendarAccess();
-        result.calendar = calender.result === "granted";
-
-        // Contacts
-        const contacts = await Contacts.requestPermissions();
-        result.contacts = contacts.contacts === "granted";
 
         // Microphone
         const mic = await VoiceRecorder.requestAudioRecordingPermission();
@@ -52,11 +40,11 @@ export async function requestAppPermissions() {
         const location = await Geolocation.requestPermissions();
         result.location = location.location === "granted";
 
-        return result.camera && result.microphone && result.location && result.calendar && result.contacts;
+        return result.camera && result.microphone && result.location;
 
     } catch (err) {
         console.error("Permission error:", err);
-        return result.camera && result.microphone && result.location && result.calendar && result.contacts;
+        return result.camera && result.microphone && result.location;
     }
 }
 

@@ -34,7 +34,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   // For API calls or external resources, typically we want network first
   // For app shell (HTML/JS), we might want cache first or stale-while-revalidate
-  
+
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(() => {
